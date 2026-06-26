@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aki Cozy | ร้านของใช้ส่วนตัวและเครื่องเขียนสไตล์อบอุ่น</title>
+    <!-- Tailwind CSS & Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Google Fonts: Noto Sans Thai -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans Thai', sans-serif; background-color: #FAF6F0; }
+    </style>
+</head>
+<body x-data="store()">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-[#2C1810] text-[#F4EBE1] sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2 cursor-pointer" @click="page = 'home'">
+                <span class="text-2xl">🍂</span>
+                <span class="text-xl font-bold tracking-wider">Aki Cozy</span>
+            </div>
+            <div class="flex space-x-6 text-sm">
+                <button @click="page = 'home'" :class="page === 'home' ? 'text-[#E07A5F] font-bold' : 'hover:text-[#E07A5F]'">หน้าแรก</button>
+                <button @click="page = 'orders'" :class="page === 'orders' ? 'text-[#E07A5F] font-bold' : 'hover:text-[#E07A5F]'">คำสั่งซื้อของฉัน</button>
+                <button @click="page = 'reviews'" :class="page === 'reviews' ? 'text-[#E07A5F] font-bold' : 'hover:text-[#E07A5F]'">รีวิวจากลูกค้า</button>
+            </div>
+            <!-- Cart Icon -->
+            <button @click="page = 'cart'" class="relative p-2 bg-[#3D251E] rounded-full hover:bg-[#E07A5F] transition">
+                🛍️
+                <span class="absolute -top-1 -right-1 bg-[#E07A5F] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold" x-text="cartCount()"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Promotion Bar -->
+    <div class="bg-[#E07A5F] text-white text-center py-1.5 text-xs font-medium tracking-wide shadow-sm">
+        🍁 Autumn Sale: กรอกโค้ด <span class="underline font-bold">AUTUMN10</span> ลดทันที 10% ทุกออเดอร์ไม่มีขั้นต่ำ!
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 py-8 min-h-screen">
+
+        <!-- ================= HOME PAGE ================= -->
+        <template x-if="page === 'home'">
+            <div>
+                <!-- Hero Banner -->
+                <div class="relative bg-[#3D251E] text-[#F4EBE1] rounded-3xl overflow-hidden mb-12 shadow-xl border-4 border-[#8B5E3C]/20">
+                    <div class="p-8 md:p-16 max-w-xl relative z-10 flex flex-col justify-center h-full">
+                        <span class="text-[#E07A5F] font-semibold tracking-widest text-sm uppercase mb-2">Welcome to Autumn Vibes</span>
+                        <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">เติมความอบอุ่นให้ชีวิตประจำวัน</h1>
+                        <p class="text-[#D4C5B9] mb-6 text-sm md:text-base">พบกับของใช้ส่วนตัวและเครื่องเขียนดีไซน์ละมุน อบอวลไปด้วยกลิ่นอายฤดูใบไม้ร่วง คัดสรรมาเพื่อคุณโดยเฉพาะ</p>
+                        <a href="#shop-section" class="bg-[#E07A5F] text-white px-6 py-3 rounded-full font-medium shadow-md hover:bg-[#F28482] transition w-fit text-center">ช้อปเลย 🍁</a>
+                    </div>
+                    <div class="absolute right-0 bottom-0 top-0 w-1/2 opacity-10 md:opacity-20 flex items-center justify-center text-[150px] pointer-events-none select-none">🍂🍁</div>
+                </div>
+
+                <!-- 5 Categories -->
+                <div class="mb-12">
+                    <h2 class="text-xl font-bold text-[#2C1810] mb-6 flex items-center"><span class="mr-2">📂</span> หมวดหมู่สินค้า</h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                        <template x-for="cat in categories">
+                            <button @click="selectedCategory = cat" :class="selectedCategory === cat ? 'bg-[#8B5E3C] text-white' : 'bg-white text-[#2C1810] hover:bg-[#F4EBE1]'" class="p-4 rounded-2xl shadow-xs border border-[#8B5E3C]/10 text-center font-medium transition cursor-pointer">
+                                <span x-text="cat"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- 3 Best Sellers & 2 New Stationery -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-8 mb-12">
+                    <!-- Best Sellers (3 Items) -->
+                    <div class="md:col-span-3 bg-[#F4EBE1] p-6 rounded-2xl border border-[#8B5E3C]/10">
+                        <h2 class="text-lg font-bold text-[#2C1810] mb-4 flex items-center">🔥 สินค้าขายดี 3 รายการ</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <template x-for="product in products.filter(p => p.isBest)">
+                                <div class="bg-white p-4 rounded-xl shadow-xs relative flex flex-col justify-between">
+                                    <span class="absolute top-2 left-2 bg-[#E07A5F] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">Best Seller</span>
+                                    <div>
+                                        <div class="text-4xl text-center my-3" x-text="product.emoji"></div>
+                                        <h3 class="font-semibold text-sm text-[#2C1810] mb-1 text-ellipsis overflow-hidden whitespace-nowrap" x-text="product.name"></h3>
+                                        <p class="text-xs text-gray-500 mb-2" x-text="'แบรนด์: ' + product.brand"></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[#E07A5F] font-bold text-sm mb-2" x-text="'฿' + product.price"></p>
+                                        <button @click="addToCart(product)" class="w-full bg-[#8B5E3C] hover:bg-[#2C1810] text-white text-xs py-2 rounded-lg transition font-medium">หยิบใส่ตะกร้า</button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- New Stationery (2 Items) -->
+                    <div class="md:col-span-2 bg-[#EDDFD3] p-6 rounded-2xl border border-[#8B5E3C]/10">
+                        <h2 class="text-lg font-bold text-[#2C1810] mb-4 flex items-center">✨ สินค้าใหม่ (เครื่องเขียน)</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <template x-for="product in products.filter(p => p.isNew)">
+                                <div class="bg-white p-4 rounded-xl shadow-xs relative flex flex-col justify-between">
+                                    <span class="absolute top-2 left-2 bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">New</span>
+                                    <div>
+                                        <div class="text-4xl text-center my-3" x-text="product.emoji"></div>
+                                        <h3 class="font-semibold text-sm text-[#2C1810] mb-1 text-ellipsis overflow-hidden whitespace-nowrap" x-text="product.name"></h3>
+                                        <p class="text-xs text-gray-500 mb-2" x-text="'แบรนด์: ' + product.brand"></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[#E07A5F] font-bold text-sm mb-2" x-text="'฿' + product.price"></p>
+                                        <button @click="addToCart(product)" class="w-full bg-[#8B5E3C] hover:bg-[#2C1810] text-white text-xs py-2 rounded-lg transition font-medium">หยิบใส่ตะกร้า</button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Shop Section (Grid View with Filters) -->
+                <div id="shop-section" class="scroll-mt-24">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-t border-[#8B5E3C]/10 pt-8">
+                        <h2 class="text-xl font-bold text-[#2C1810] flex items-center">🍁 รายการสินค้าทั้งหมด (<span x-text="filteredProducts().length"></span>)</h2>
+                        
+                        <!-- Filters & Sorting Controls -->
+                        <div class="flex flex-wrap gap-3 w-full md:w-auto text-xs">
+                            <select x-model="filterBrand" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#8B5E3C]">
+                                <option value="all">ทุกแบรนด์</option>
+                                <option value="MochiKuma">MochiKuma</option>
+                                <option value="CozyLeaf">CozyLeaf</option>
+                                <option value="AkiStudio">AkiStudio</option>
+                            </select>
+                            <select x-model="filterPrice" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#8B5E3C]">
+                                <option value="all">ทุกราคา</option>
+                                <option value="0-100">ต่ำกว่า 100 ฿</option>
+                                <option value="101-300">101 - 300 ฿</option>
+                            </select>
+                            <select x-model="sortBy" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#8B5E3C]">
+                                <option value="popular">ความนิยม</option>
+                                <option value="newest">มาใหม่ล่าสุด</option>
+                                <option value="priceAsc">ราคา: ต่ำไปสูง</option>
+                            </select>
+                            <button @click="resetFilters()" class="text-gray-500 hover:text-[#E07A5F] underline font-medium cursor-pointer">ล้างฟิลเตอร์</button>
+                        </div>
+                    </div>
+
+                    <!-- Products Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                        <template x-for="product in filteredProducts()" :key="product.id">
+                            <div class="bg-white rounded-2xl p-4 shadow-xs border border-[#8B5E3C]/5 hover:shadow-md transition flex flex-col justify-between">
+                                <div>
+                                    <div class="bg-[#FAF6F0] rounded-xl p-6 text-center text-5xl mb-4" x-text="product.emoji"></div>
+                                    <span class="text-[10px] bg-[#EDDFD3] text-[#8B5E3C] px-2 py-0.5 rounded-md font-medium" x-text="product.category"></span>
+                                    <h3 class="font-bold text-[#2C1810] mt-2 mb-1 text-sm md:text-base line-clamp-2" x-text="product.name"></h3>
+                                    <p class="text-xs text-gray-400 mb-2" x-text="'แบรนด์: ' + product.brand"></p>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-3">
+                                        <span class="text-[#E07A5F] font-bold text-base md:text-lg" x-text="'฿' + product.price"></span>
+                                        <span class="text-[11px] text-amber-600">⭐ <span x-text="product.rating"></span></span>
+                                    </div>
+                                    <button @click="addToCart(product)" class="w-full bg-[#E07A5F] hover:bg-[#8B5E3C] text-white font-medium py-2 rounded-xl text-xs md:text-sm transition shadow-xs flex items-center justify-center space-x-1 cursor-pointer">
+                                        <span>หยิบใส่ตะกร้า</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- ================= CART PAGE ================= -->
+        <template x-if="page === 'cart'">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-2xl font-bold text-[#2C1810] mb-6 flex items-center">🛍️ ตะกร้าสินค้าของคุณ</h2>
+                <template x-if="cart.length === 0">
+                    <div class="bg-white rounded-2xl p-12 text-center border border-[#8B5E3C]/10 shadow-xs">
+                        <div class="text-6xl mb-4">🍂</div>
+                        <p class="text-gray-500 mb-6">ตะกร้าของคุณยังว่างเปล่าอยู่เลย</p>
+                        <button @click="page = 'home'" class="bg-[#8B5E3C] text-white px-6 py-2.5 rounded-full font-medium shadow-xs hover:bg-[#2C1810] transition text-sm">ไปเลือกซื้อสินค้ากันเลย</button>
+                    </div>
+                </template>
+
+                <template x-if="cart.length > 0">
+                    <div class="space-y-4">
+                        <template x-for="item in cart" :key="item.id">
+                            <div class="bg-white p-4 rounded-xl shadow-xs border border-[#8B5E3C]/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                <div class="flex items-center space-x-4">
+                                    <div class="text-4xl bg-[#FAF6F0] p-2 rounded-lg" x-text="item.emoji"></div>
+                                    <div>
+                                        <h3 class="font-bold text-[#2C1810]" x-text="item.name"></h3>
+                                        <p class="text-xs text-gray-400" x-text="'ราคาต่อชิ้น: ฿' + item.price"></p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between w-full sm:w-auto space-x-6">
+                                    <!-- Edit Quantity -->
+                                    <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-gray-50">
+                                        <button @click="updateQty(item.id, -1)" class="px-2.5 py-1 text-gray-600 hover:bg-gray-200 font-bold">-</button>
+                                        <span class="px-4 py-1 bg-white text-sm font-semibold text-gray-800" x-text="item.qty"></span>
+                                        <button @click="updateQty(item.id, 1)" class="px-2.5 py-1 text-gray-600 hover:bg-gray-200 font-bold">+</button>
+                                    </div>
+                                    <!-- Total Price & Remove -->
+                                    <div class="flex items-center space-x-4">
+                                        <span class="font-bold text-[#E07A5F] min-w-[70px] text-right" x-text="'฿' + (item.price * item.qty)"></span>
+                                        <button @click="removeFromCart(item.id)" class="text-red-500 hover:text-red-700 text-sm font-medium cursor-pointer">ลบ</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Bill Summary -->
+                        <div class="bg-white p-6 rounded-2xl border border-[#8B5E3C]/10 shadow-xs mt-6">
+                            <div class="flex justify-between items-center mb-4 text-sm text-gray-600">
+                                <span>ยอดรวมทั้งหมด</span>
+                                <span class="font-medium text-gray-800" x-text="'฿' + getCartTotal()"></span>
+                            </div>
+                            <div class="flex justify-between items-center pb-4 mb-4 border-b border-gray-100 text-sm text-emerald-600 font-medium">
+                                <span>ส่วนลดต้อนรับใบไม้ร่วง (10%)</span>
+                                <span x-text="'- ฿' + Math.round(getCartTotal() * 0.1)"></span>
+                            </div>
+                            <div class="flex justify-between items-center mb-6">
+                                <span class="text-lg font-bold text-[#2C1810]">ยอดชำระสุทธิ</span>
+                                <span class="text-2xl font-bold text-[#E07A5F]" x-text="'฿' + Math.round(getCartTotal() * 0.9)"></span>
+                            </div>
+                            <button @click="page = 'checkout'" class="w-full bg-[#E07A5F] hover:bg-[#8B5E3C] text-white font-bold py-3 rounded-xl shadow-md transition text-center text-sm cursor-pointer">
+                                ไปยังขั้นตอนการชำระเงิน ✨
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- ================= CHECKOUT PAGE ================= -->
+        <template x-if="page === 'checkout'">
+            <div class="max-w-xl mx-auto bg-white p-6 md:p-8 rounded-2xl border border-[#8B5E3C]/10 shadow-sm">
+                <h2 class="text-2xl font-bold text-[#2C1810] mb-6 flex items-center">📝 ข้อมูลการจัดส่งและชำระเงิน</h2>
+                <form @submit.prevent="placeOrder()">
+                    <!-- Shipping Address -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-bold text-[#2C1810] mb-2">ที่อยู่สำหรับจัดส่ง</label>
+                        <textarea x-model="checkoutForm.address" required rows="3" placeholder="กรุณากรอก ชื่อ-นามสกุล, เบอร์โทรศัพท์ และที่อยู่ผู้รับอย่างละเอียด..." class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#8B5E3C]"></textarea>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-bold text-[#2C1810] mb-3">วิธีการชำระเงิน</label>
+                        <div class="space-y-3">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50">
+                                <input type="radio" x-model="checkoutForm.payment" value="เก็บเงินปลายทาง" class="text-[#8B5E3C] focus:ring-[#8B5E3C]">
+                                <span class="ml-3 text-sm font-medium text-gray-700">📦 เก็บเงินปลายทาง (COD)</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50">
+                                <input type="radio" x-model="checkoutForm.payment" value="โอนผ่าน QR พร้อมเพย์" class="text-[#8B5E3C] focus:ring-[#8B5E3C]">
+                                <span class="ml-3 text-sm font-medium text-gray-700">📱 โอนผ่าน QR พร้อมเพย์ (PromptPay)</span>
+                            </label>
+                            <!-- QR Code Box: แสดงเมื่อเลือก PromptPay -->
+       
+                        </div>
+                    </div>
+
+                    <!-- Confirm Button -->
+                    <div class="bg-[#FAF6F0] p-4 rounded-xl mb-6 flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-600">ยอดที่ต้องชำระทั้งสิ้น:</span>
+                        <span class="text-xl font-bold text-[#E07A5F]" x-text="'฿' + Math.round(getCartTotal() * 0.9)"></span>
+                         <div x-show="checkoutForm.payment === 'โอนผ่าน QR พร้อมเพย์'"
+             x-transition
+             class="p-4 border border-gray-200 rounded-xl bg-gray-50 text-center">
+            <p class="text-sm font-medium text-gray-700 mb-3">สแกน QR Code เพื่อชำระเงิน</p>
+            <img src="main.png"
+                 alt="PromptPay QR Code"
+                 class="w-48 h-48 mx-auto rounded-lg border border-gray-200">
+            <p class="text-xs text-gray-500 mt-3">กรุณาแคปหน้าจอสลิปการโอนเพื่อยืนยันการชำระเงิน</p>
+        </div>
+                    </div>
+
+                    <div class="flex space-x-4">
+                        <button type="button" @click="page = 'cart'" class="w-1/3 border border-gray-300 text-gray-600 py-3 rounded-xl font-medium text-sm hover:bg-gray-50 transition cursor-pointer text-center">ย้อนกลับ</button>
+                        <button type="submit" class="w-2/3 bg-[#8B5E3C] hover:bg-[#2C1810] text-white py-3 rounded-xl font-bold text-sm transition shadow-md cursor-pointer text-center">ยืนยันคำสั่งซื้อ 🎉</button>
+                    </div>
+                </form>
+            </div>
+        </template>
+
+        <!-- ================= MY ORDERS PAGE ================= -->
+        <template x-if="page === 'orders'">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-2xl font-bold text-[#2C1810] mb-6 flex items-center">📜 ประวัติคำสั่งซื้อของฉัน</h2>
+                <template x-if="orders.length === 0">
+                    <div class="bg-white rounded-2xl p-12 text-center border border-[#8B5E3C]/10 shadow-xs">
+                        <p class="text-gray-500">คุณยังไม่มีประวัติคำสั่งซื้อในขณะนี้</p>
+                    </div>
+                </template>
+
+                <div class="space-y-6">
+                    <template x-for="order in orders" :key="order.id">
+                        <div class="bg-white rounded-2xl border border-[#8B5E3C]/10 shadow-xs overflow-hidden">
+                            <!-- Order Header -->
+                            <div class="bg-[#F4EBE1] p-4 flex justify-between items-center border-b border-[#8B5E3C]/10">
+                                <div>
+                                    <p class="text-xs text-gray-500" x-text="'เลขออเดอร์: #' + order.id"></p>
+                                    <p class="text-xs text-gray-400" x-text="'วันที่: ' + order.date"></p>
+                                </div>
+                                <div class="text-right">
+                                    <span :class="order.status === 'ยกเลิกแล้ว' ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-700'" class="text-xs font-bold px-3 py-1 rounded-full" x-text="order.status"></span>
+                                </div>
+                            </div>
+                            <!-- Order Details -->
+                            <div class="p-4 md:p-6">
+                                <div class="divide-y divide-gray-100 mb-4">
+                                    <template x-for="item in order.items">
+                                        <div class="py-2.5 flex justify-between items-center text-sm">
+                                            <span class="text-gray-700" x-text="item.name + ' x ' + item.qty"></span>
+                                            <span class="font-medium text-gray-900" x-text="'฿' + (item.price * item.qty)"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div class="text-xs text-gray-500 mb-4 border-t border-gray-100 pt-4">
+                                    <p class="mb-1"><span class="font-bold">ที่อยู่จัดส่ง:</span> <span x-text="order.address"></span></p>
+                                    <p><span class="font-bold">วิธีชำระเงิน:</span> <span x-text="order.payment"></span></p>
+                                </div>
+                                <div class="flex justify-between items-center border-t border-gray-100 pt-4">
+                                    <div>
+                                        <span class="text-xs text-gray-500">ยอดรวมสุทธิ: </span>
+                                        <span class="text-lg font-bold text-[#E07A5F]" x-text="'฿' + order.total"></span>
+                                    </div>
+                                    <!-- Cancel Order Button -->
+                                    <template x-if="order.status === 'กำลังเตรียมจัดส่ง'">
+                                        <button @click="cancelOrder(order.id)" class="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold px-4 py-2 rounded-xl transition cursor-pointer">ยกเลิกคำสั่งซื้อ</button>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <!-- ================= REVIEWS PAGE ================= -->
+        <template x-if="page === 'reviews'">
+            <div class="max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-[#2C1810] mb-6 flex items-center">💭 รีวิวจากคุณลูกค้า</h2>
+                
+                <!-- Write a Review Form -->
+                <div class="bg-white p-6 rounded-2xl border border-[#8B5E3C]/10 shadow-xs mb-8">
+                    <h3 class="font-bold text-[#2C1810] text-sm mb-4">แบ่งปันความประทับใจของคุณ 😊</h3>
+                    <form @submit.prevent="addReview()">
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">ชื่อของคุณ</label>
+                                <input type="text" x-model="reviewForm.name" required class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#8B5E3C]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">คะแนนความพึงพอใจ</label>
+                                <select x-model="reviewForm.rating" class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#8B5E3C]">
+                                    <option value="5">⭐⭐⭐⭐⭐ (5 ดาว)</option>
+                                    <option value="4">⭐⭐⭐⭐ (4 ดาว)</option>
+                                    <option value="3">⭐⭐⭐ (3 ดาว)</option>
+                                    <option value="2">⭐⭐ (2 ดาว)</option>
+                                    <option value="1">⭐ (1 ดาว)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs font-medium text-gray-600 mb-1">ความคิดเห็น</label>
+                            <textarea x-model="reviewForm.comment" required rows="3" placeholder="เขียนรีวิวสินค้าที่นี่..." class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#8B5E3C]"></textarea>
+                        </div>
+                        <button type="submit" class="bg-[#8B5E3C] hover:bg-[#2C1810] text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-xs cursor-pointer">ส่งรีวิว</button>
+                    </form>
+                </div>
+
+                <!-- Reviews List -->
+                <div class="space-y-4">
+                    <template x-for="review in reviews">
+                        <div class="bg-white p-4 rounded-xl border border-[#8B5E3C]/5 shadow-2xs">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold text-sm text-[#2C1810]" x-text="review.name"></span>
+                                <span class="text-xs text-amber-500" x-text="'⭐'.repeat(review.rating)"></span>
+                            </div>
+                            <p class="text-xs text-gray-600 leading-relaxed" x-text="review.comment"></p>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#2C1810] text-[#D4C5B9] text-center py-6 border-t border-[#8B5E3C]/20 text-xs">
+        <p>© 2026 Aki Cozy Store. มอบความอบอุ่นในทุกชิ้นงานสไตล์โมชิโมชิ.</p>
+    </footer>
+
+    <!-- Alpine.js Store Functionality -->
+    <script>
+        function store() {
+            return {
+                page: 'home',
+                selectedCategory: 'ทั้งหมด',
+                filterBrand: 'all',
+                filterPrice: 'all',
+                sortBy: 'popular',
+                
+                categories: ['ทั้งหมด', 'เครื่องเขียน', 'แก้วน้ำ/กระติก', 'กระเป๋า', 'หมอน/ผ้าห่ม', 'กิ๊ฟช็อป'],
+                
+                //Mock Products (10 items total for filtering presentation)
+                products: [
+                    { id: 1, name: 'สมุดโน้ตปกหนังใบไม้ร่วง A5', price: 89, category: 'เครื่องเขียน', brand: 'AkiStudio', emoji: '📔', rating: 4.8, isNew: true, isBest: false, dateAdded: 2026 },
+                    { id: 2, name: 'ปากกาเจลเซ็ต Autumn Pastel (5 ด้าม)', price: 120, category: 'เครื่องเขียน', brand: 'MochiKuma', emoji: '🖊️', rating: 4.9, isNew: true, isBest: false, dateAdded: 2025 },
+                    { id: 3, name: 'กระบอกน้ำเก็บอุณหภูมิสีชานม', price: 299, category: 'แก้วน้ำ/กระติก', brand: 'CozyLeaf', emoji: '🥤', rating: 5.0, isNew: false, isBest: true, dateAdded: 2024 },
+                    { id: 4, name: 'หมอนอิงลายน้องหมีและใบเมเปิ้ล', price: 250, category: 'หมอน/ผ้าห่ม', brand: 'MochiKuma', emoji: '🧸', rating: 4.7, isNew: false, isBest: true, dateAdded: 2023 },
+                    { id: 5, name: 'กระเป๋าผ้าแคนวาสสีครีมมินิมอล', price: 180, category: 'กระเป๋า', brand: 'CozyLeaf', emoji: '👜', rating: 4.9, isNew: false, isBest: true, dateAdded: 2024 },
+                    { id: 6, name: 'กิ๊ฟหนีบผมทรงใบแปะก๊วย', price: 49, category: 'กิ๊ฟช็อป', brand: 'AkiStudio', emoji: '🎀', rating: 4.5, isNew: false, isBest: false, dateAdded: 2024 },
+                    { id: 7, name: 'ผ้าห่มนาโนเนื้อนุ่มลายทางสีส้มอิฐ', price: 350, category: 'หมอน/ผ้าห่ม', brand: 'MochiKuma', emoji: '🛌', rating: 4.6, isNew: false, isBest: false, dateAdded: 2025 },
+                    { id: 8, name: 'เทปตกแต่งลายป่าสนฤดูใบไม้ร่วง', price: 35, category: 'เครื่องเขียน', brand: 'AkiStudio', emoji: '🎞️', rating: 4.8, isNew: false, isBest: false, dateAdded: 2025 }
+                ],
+                
+                cart: [],
+                orders: [],
+                reviews: [
+                    { name: 'น้องเมย์', rating: 5, comment: 'ร้านแพ็คของมาดีมากค่ะ ลายน่ารักสุดๆ โทนสีอบอุ่นหัวใจมากกกก 🍂' },
+                    { name: 'Korn_คุง', rating: 4, comment: 'สมุดโน้ตเนื้อกระดาษดี เขียนลื่นครับ ส่งไวดีด้วย' }
+                ],
+                
+                checkoutForm: { address: '', payment: 'เก็บเงินปลายทาง' },
+                reviewForm: { name: '', rating: '5', comment: '' },
+
+                // Cart Actions
+                addToCart(product) {
+                    let found = this.cart.find(item => item.id === product.id);
+                    if (found) {
+                        found.qty++;
+                    } else {
+                        this.cart.push({ ...product, qty: 1 });
+                    }
+                    alert(`เพิ่ม "${product.name}" ลงตะกร้าแล้ว! 🍁`);
+                },
+                removeFromCart(id) {
+                    this.cart = this.cart.filter(item => item.id !== id);
+                },
+                updateQty(id, change) {
+                    let found = this.cart.find(item => item.id === id);
+                    if (found) {
+                        found.qty += change;
+                        if (found.qty <= 0) this.removeFromCart(id);
+                    }
+                },
+                cartCount() {
+                    return this.cart.reduce((sum, item) => sum + item.qty, 0);
+                },
+                getCartTotal() {
+                    return this.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+                },
+
+                // Filter & Sort Logic
+                filteredProducts() {
+                    let result = this.products;
+
+                    if (this.selectedCategory !== 'ทั้งหมด') {
+                        result = result.filter(p => p.category === this.selectedCategory);
+                    }
+                    if (this.filterBrand !== 'all') {
+                        result = result.filter(p => p.brand === this.filterBrand);
+                    }
+                    if (this.filterPrice !== 'all') {
+                        if (this.filterPrice === '0-100') result = result.filter(p => p.price <= 100);
+                        if (this.filterPrice === '101-300') result = result.filter(p => p.price > 100 && p.price <= 300);
+                    }
+                    
+                    // Sorting
+                    if (this.sortBy === 'popular') result.sort((a, b) => b.rating - a.rating);
+                    if (this.sortBy === 'newest') result.sort((a, b) => b.dateAdded - a.dateAdded);
+                    if (this.sortBy === 'priceAsc') result.sort((a, b) => a.price - b.price);
+
+                    return result;
+                },
+                resetFilters() {
+                    this.selectedCategory = 'ทั้งหมด';
+                    this.filterBrand = 'all';
+                    this.filterPrice = 'all';
+                    this.sortBy = 'popular';
+                },
+
+                // Order Process
+                placeOrder() {
+                    let finalTotal = Math.round(this.getCartTotal() * 0.9);
+                    let newOrder = {
+                        id: Math.floor(1000 + Math.random() * 9000),
+                        date: new Date().toLocaleDateString('th-TH'),
+                        items: JSON.parse(JSON.stringify(this.cart)),
+                        address: this.checkoutForm.address,
+                        payment: this.checkoutForm.payment,
+                        total: finalTotal,
+                        status: 'กำลังเตรียมจัดส่ง'
+                    };
+                    this.orders.unshift(newOrder);
+                    this.cart = [];
+                    this.checkoutForm.address = '';
+                    alert('✨ ยืนยันคำสั่งซื้อสำเร็จ! ขอบคุณที่อุดหนุน Aki Cozy ครับ');
+                    this.page = 'orders';
+                },
+                cancelOrder(id) {
+                    if (confirm('คุณแน่ใจหรือไม่ว่าต้องการยกเลิกคำสั่งซื้อนี้?')) {
+                        let found = this.orders.find(o => o.id === id);
+                        if (found) found.status = 'ยกเลิกแล้ว';
+                    }
+                },
+
+                // Review Action
+                addReview() {
+                    this.reviews.unshift({
+                        name: this.reviewForm.name,
+                        rating: parseInt(this.reviewForm.rating),
+                        comment: this.reviewForm.comment
+                    });
+                    this.reviewForm.name = '';
+                    this.reviewForm.comment = '';
+                    alert('ส่งรีวิวเรียบร้อยแล้ว ขอบคุณสำหรับความคิดเห็นครับ 💬');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
